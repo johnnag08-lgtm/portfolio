@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>John Prashant Nag — HR Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D078;
+    --gold-pale: #F7EBC8;
+    --gold-dim: #7A6128;
+    --black: #060608;
+    --black-2: #0D0C10;
+    --black-3: #131118;
+    --velvet: #180E22;
+    --velvet-2: #1E1030;
+    --white: #F5EFE0;
+    --white-dim: #B8AA90;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s;
+    opacity: 0.5;
+  }
+
+  /* ─── CANVAS PARTICLES ─── */
+  #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  /* ─── VOICE MODAL ─── */
+  #voiceModal {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(6,6,8,0.97);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(20px);
+    animation: fadeIn 0.8s ease;
+  }
+  .modal-inner {
+    text-align: center;
+    padding: 60px 50px;
+    border: 1px solid var(--gold-dim);
+    background: linear-gradient(160deg, var(--velvet) 0%, var(--black-2) 100%);
+    max-width: 520px; width: 90%;
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-inner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .modal-ornament {
+    font-family: 'Cinzel', serif;
+    color: var(--gold); font-size: 0.75rem; letter-spacing: 0.4em;
+    text-transform: uppercase; margin-bottom: 28px; opacity: 0.7;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--gold-pale); font-weight: 400;
+    line-height: 1.25; margin-bottom: 20px;
+    font-style: italic;
+  }
+  .modal-sub {
+    font-size: 1.1rem; color: var(--white-dim);
+    line-height: 1.7; margin-bottom: 40px; font-weight: 300;
+  }
+  .modal-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold), var(--gold-light));
+    color: var(--black); border: none;
+    padding: 14px 40px; font-family: 'Cinzel', serif;
+    font-size: 0.8rem; letter-spacing: 0.25em; cursor: pointer;
+    text-transform: uppercase; transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .btn-gold::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%); transition: transform 0.4s;
+  }
+  .btn-gold:hover::after { transform: translateX(100%); }
+  .btn-ghost {
+    background: transparent; color: var(--white-dim);
+    border: 1px solid var(--gold-dim);
+    padding: 14px 40px; font-family: 'Cinzel', serif;
+    font-size: 0.8rem; letter-spacing: 0.25em; cursor: pointer;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .modal-wave {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; margin-bottom: 30px; height: 36px;
+  }
+  .wave-bar {
+    width: 3px; background: var(--gold); border-radius: 2px;
+    animation: wave 1.2s ease-in-out infinite;
+    opacity: 0.8;
+  }
+  .wave-bar:nth-child(1){ height:12px; animation-delay:0s; }
+  .wave-bar:nth-child(2){ height:22px; animation-delay:0.1s; }
+  .wave-bar:nth-child(3){ height:30px; animation-delay:0.2s; }
+  .wave-bar:nth-child(4){ height:22px; animation-delay:0.3s; }
+  .wave-bar:nth-child(5){ height:14px; animation-delay:0.4s; }
+  .wave-bar:nth-child(6){ height:26px; animation-delay:0.5s; }
+  .wave-bar:nth-child(7){ height:18px; animation-delay:0.6s; }
+  @keyframes wave { 0%,100%{transform:scaleY(0.5)} 50%{transform:scaleY(1.4)} }
+
+  /* ─── NARRATION BAR ─── */
+  #narrationBar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, var(--velvet), var(--black-3), var(--velvet));
+    border-top: 1px solid var(--gold-dim);
+    padding: 12px 30px; z-index: 500;
+    display: none; align-items: center; gap: 20px;
+    justify-content: space-between;
+  }
+  .narration-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; color: var(--gold-pale);
+    font-style: italic; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .narration-waves { display: flex; gap: 3px; align-items: center; }
+  .n-bar {
+    width: 3px; height: 14px; background: var(--gold); border-radius: 2px;
+    animation: wave 0.8s ease-in-out infinite;
+  }
+  .n-bar:nth-child(2){animation-delay:.1s} .n-bar:nth-child(3){animation-delay:.2s}
+  .n-bar:nth-child(4){animation-delay:.3s} .n-bar:nth-child(5){animation-delay:.1s}
+  .stop-btn {
+    background: transparent; border: 1px solid var(--gold-dim);
+    color: var(--white-dim); padding: 6px 18px; cursor: pointer;
+    font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.2em;
+    transition: all 0.3s;
+  }
+  .stop-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ─── MAIN CONTENT ─── */
+  main { position: relative; z-index: 1; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 100px 30px 60px;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 0%, rgba(24,14,34,0.9) 0%, var(--black) 70%);
+  }
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif; color: var(--gold);
+    font-size: 0.75rem; letter-spacing: 0.5em;
+    text-transform: uppercase; margin-bottom: 24px;
+    opacity: 0; animation: slideUp 1s ease 0.5s forwards;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 700; line-height: 1.05;
+    color: var(--gold-pale);
+    opacity: 0; animation: slideUp 1s ease 0.7s forwards;
+    text-shadow: 0 0 80px rgba(201,168,76,0.4);
+  }
+  .hero-name span { color: var(--gold); font-style: italic; }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: var(--white-dim); font-weight: 300;
+    letter-spacing: 0.15em; margin-top: 20px;
+    opacity: 0; animation: slideUp 1s ease 0.9s forwards;
+  }
+  .hero-divider {
+    display: flex; align-items: center; gap: 20px;
+    margin: 36px 0; opacity: 0; animation: slideUp 1s ease 1.1s forwards;
+  }
+  .divider-line { flex: 1; max-width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .divider-line.r { background: linear-gradient(90deg, var(--gold), transparent); }
+  .divider-gem { color: var(--gold); font-size: 1rem; }
+  .hero-tagline {
+    font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--white-dim);
+    max-width: 600px; line-height: 1.8; font-style: italic;
+    opacity: 0; animation: slideUp 1s ease 1.3s forwards;
+  }
+  .hero-stats {
+    display: flex; gap: 50px; margin-top: 60px; flex-wrap: wrap; justify-content: center;
+    opacity: 0; animation: slideUp 1s ease 1.5s forwards;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--gold); font-weight: 700;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--white-dim); letter-spacing: 0.1em; margin-top: 4px; }
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; animation: fadeIn 1s ease 2s forwards;
+  }
+  .scroll-hint span { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.4em; color: var(--gold); opacity: 0.6; }
+  .scroll-arrow { width: 1px; height: 50px; background: linear-gradient(180deg, var(--gold), transparent); animation: scrollAnim 2s ease infinite; }
+  @keyframes scrollAnim { 0%{opacity:0;transform:scaleY(0.3) translateY(-10px)} 50%{opacity:1} 100%{opacity:0;transform:scaleY(1) translateY(10px)} }
+
+  /* ─── SECTION COMMON ─── */
+  section { padding: 100px 30px; position: relative; }
+  .section-wrap { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-family: 'Cinzel', serif; color: var(--gold);
+    font-size: 0.7rem; letter-spacing: 0.5em; text-transform: uppercase;
+    margin-bottom: 16px; opacity: 0.7;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--gold-pale); font-weight: 400;
+    line-height: 1.2; margin-bottom: 50px;
+    position: relative;
+  }
+  .section-title::after {
+    content: ''; position: absolute; bottom: -16px; left: 0;
+    width: 60px; height: 1px; background: var(--gold);
+  }
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.9s ease, transform 0.9s ease; }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* ─── ABOUT ─── */
+  #about {
+    background: linear-gradient(180deg, var(--black) 0%, var(--velvet) 50%, var(--black) 100%);
+  }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  @media(max-width:768px){ .about-grid{ grid-template-columns:1fr; gap:40px; } }
+  .about-quote-mark {
+    font-family: 'Playfair Display', serif; font-size: 8rem;
+    color: var(--gold); opacity: 0.15; line-height: 0.7;
+    margin-bottom: -20px; display: block;
+  }
+  .about-quote {
+    font-size: clamp(1.2rem, 2vw, 1.6rem); font-style: italic;
+    line-height: 1.7; color: var(--white);
+    border-left: 2px solid var(--gold); padding-left: 30px;
+    margin-bottom: 30px;
+  }
+  .about-body { font-size: 1.05rem; color: var(--white-dim); line-height: 1.9; }
+  .about-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(30,16,48,0.8));
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 40px; position: relative; overflow: hidden;
+  }
+  .about-card::before {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(201,168,76,0.15), transparent);
+    border-bottom-left-radius: 100%;
+  }
+  .info-item { margin-bottom: 22px; }
+  .info-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 5px; }
+  .info-value { font-size: 1rem; color: var(--white); }
+  .info-value a { color: var(--gold-light); text-decoration: none; }
+  .info-value a:hover { color: var(--gold-pale); text-decoration: underline; }
+
+  /* ─── JOURNEY TIMELINE ─── */
+  #journey {
+    background: var(--black-2);
+  }
+  .timeline { position: relative; padding-left: 0; }
+  .timeline-spine {
+    position: absolute; left: 30px; top: 0; bottom: 0;
+    width: 1px; background: linear-gradient(180deg, var(--gold-dim), var(--gold), var(--gold-dim));
+    opacity: 0.4;
+  }
+  @media(min-width:768px){ .timeline-spine{ left: 50%; } }
+  .timeline-item {
+    display: flex; gap: 40px; margin-bottom: 70px;
+    position: relative; padding-left: 80px;
+    align-items: flex-start;
+  }
+  @media(min-width:768px){
+    .timeline-item{ padding-left: 0; }
+    .timeline-item:nth-child(odd) { flex-direction: row-reverse; padding-right: calc(50% + 60px); }
+    .timeline-item:nth-child(even) { padding-left: calc(50% + 60px); }
+  }
+  .timeline-dot {
+    position: absolute; left: 22px; top: 20px;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--gold); background: var(--black);
+    z-index: 2;
+    box-shadow: 0 0 16px rgba(201,168,76,0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  @media(min-width:768px){ .timeline-dot{ left: calc(50% - 9px); } }
+  .timeline-item:hover .timeline-dot {
+    transform: scale(1.4); box-shadow: 0 0 30px rgba(201,168,76,0.8);
+  }
+  .timeline-card {
+    background: linear-gradient(135deg, var(--black-3), var(--velvet));
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 36px; flex: 1;
+    position: relative; overflow: hidden;
+    transition: border-color 0.4s, transform 0.4s;
+  }
+  .timeline-card:hover {
+    border-color: rgba(201,168,76,0.45);
+    transform: translateY(-4px);
+  }
+  .timeline-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .timeline-card:hover::before { opacity: 1; }
+  .timeline-period {
+    font-family: 'Cinzel', serif; font-size: 0.68rem;
+    letter-spacing: 0.3em; color: var(--gold); margin-bottom: 12px;
+  }
+  .timeline-role {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: var(--gold-pale);
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .timeline-company {
+    font-size: 1rem; color: var(--white-dim);
+    margin-bottom: 20px; font-style: italic;
+  }
+  .timeline-desc { font-size: 0.97rem; color: var(--white-dim); line-height: 1.8; }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .tag {
+    font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em;
+    color: var(--gold); border: 1px solid var(--gold-dim);
+    padding: 4px 12px;
+    background: rgba(201,168,76,0.05);
+    text-transform: uppercase;
+  }
+
+  /* ─── SKILLS ─── */
+  #skills {
+    background: linear-gradient(180deg, var(--black) 0%, rgba(24,14,34,0.5) 100%);
+  }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+  .skill-category {
+    background: linear-gradient(145deg, var(--black-3), var(--velvet));
+    border: 1px solid rgba(201,168,76,0.12);
+    padding: 32px; transition: all 0.4s; position: relative; overflow: hidden;
+  }
+  .skill-category:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-6px); }
+  .skill-category::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .skill-category:hover::after { transform: scaleX(1); }
+  .skill-icon { font-size: 1.8rem; margin-bottom: 16px; }
+  .skill-cat-name {
+    font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.3em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 18px;
+  }
+  .skill-list { list-style: none; }
+  .skill-list li {
+    font-size: 0.95rem; color: var(--white-dim); padding: 6px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .skill-list li::before { content: '◆'; font-size: 0.5rem; color: var(--gold); opacity: 0.6; }
+
+  /* ─── ACHIEVEMENTS ─── */
+  #achievements { background: var(--black-2); }
+  .achievements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+  .achievement-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(6,6,8,0.9));
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 40px; text-align: center; transition: all 0.4s; position: relative; overflow: hidden;
+  }
+  .achievement-card:hover { border-color: var(--gold); transform: translateY(-6px); }
+  .achievement-card::before {
+    content: ''; position: absolute; top: -40px; left: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12), transparent);
+    border-radius: 50%;
+  }
+  .ach-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--gold); font-weight: 700;
+    display: block; margin-bottom: 12px;
+  }
+  .ach-text { font-size: 1rem; color: var(--white-dim); line-height: 1.6; }
+
+  /* ─── EDUCATION ─── */
+  #education { background: linear-gradient(180deg, var(--black) 0%, var(--velvet) 100%); }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  @media(max-width:768px){ .edu-grid{ grid-template-columns:1fr; } }
+  .edu-card {
+    background: linear-gradient(135deg, var(--black-3), rgba(24,14,34,0.9));
+    border: 1px solid rgba(201,168,76,0.18);
+    padding: 36px; transition: all 0.4s; position: relative;
+  }
+  .edu-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+  .edu-degree {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; color: var(--gold-pale); margin-bottom: 8px; font-weight: 600;
+  }
+  .edu-school { font-size: 1rem; color: var(--white-dim); font-style: italic; margin-bottom: 10px; }
+  .edu-period { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); }
+
+  /* ─── CERTIFICATIONS ─── */
+  #certifications { background: var(--black-3); }
+  .cert-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 18px; }
+  .cert-item {
+    display: flex; align-items: center; gap: 18px;
+    background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.12);
+    padding: 20px 24px; transition: all 0.4s;
+  }
+  .cert-item:hover { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.08); }
+  .cert-gem { color: var(--gold); font-size: 0.8rem; }
+  .cert-name { font-size: 0.95rem; color: var(--white-dim); }
+
+  /* ─── CONTACT ─── */
+  #contact {
+    background: radial-gradient(ellipse at 50% 100%, var(--velvet) 0%, var(--black) 60%);
+    text-align: center;
+  }
+  .contact-email {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 3vw, 2rem);
+    color: var(--gold-light); font-style: italic;
+    text-decoration: none; display: inline-block;
+    border-bottom: 1px solid var(--gold-dim);
+    padding-bottom: 6px; transition: all 0.3s;
+    margin-bottom: 14px;
+  }
+  .contact-email:hover { color: var(--gold-pale); border-bottom-color: var(--gold); }
+  .contact-info { font-size: 1.05rem; color: var(--white-dim); margin-bottom: 8px; }
+  .contact-divider { margin: 40px auto; width: 100px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .footer-sign {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.1rem; color: var(--gold-dim); margin-top: 60px;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled { background: rgba(6,6,8,0.95); backdrop-filter: blur(20px); padding: 14px 40px; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .nav-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.85rem; letter-spacing: 0.3em; }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--white-dim); text-decoration: none; transition: color 0.3s; text-transform: uppercase; }
+  .nav-links a:hover { color: var(--gold); }
+  @media(max-width:600px){ .nav-links{ display:none; } }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Particles -->
+<canvas id="particles"></canvas>
+
+<!-- Voice Modal -->
+<div id="voiceModal">
+  <div class="modal-inner">
+    <div class="modal-ornament">✦ Welcome ✦</div>
+    <div class="modal-wave">
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+    <h2 class="modal-title">Shall I narrate<br/>this portfolio for you?</h2>
+    <p class="modal-sub">Allow me to guide you through John's journey with a soft, personal narration — or explore at your own pace.</p>
+    <div class="modal-btns">
+      <button class="btn-gold" onclick="startNarration()">✦ Yes, Please</button>
+      <button class="btn-ghost" onclick="closeModal()">Explore Silently</button>
+    </div>
+  </div>
+</div>
+
+<!-- Narration Bar -->
+<div id="narrationBar">
+  <div class="narration-waves">
+    <div class="n-bar"></div><div class="n-bar"></div>
+    <div class="n-bar"></div><div class="n-bar"></div>
+    <div class="n-bar"></div>
+  </div>
+  <span class="narration-text" id="narrationText">Narrating...</span>
+  <button class="stop-btn" onclick="stopNarration()">■ Stop</button>
+</div>
+
+<!-- Navigation -->
+<nav id="nav">
+  <div class="nav-logo">J P N</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#achievements">Highlights</a></li>
+    <li><a href="#contact">Connect</a></li>
+  </ul>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-eyebrow">Human Resources · Talent Acquisition · People Strategy</div>
+    <h1 class="hero-name">John Prashant <span>Nag</span></h1>
+    <p class="hero-title">HR Executive &nbsp;·&nbsp; Talent Architect &nbsp;·&nbsp; People's Champion</p>
+    <div class="hero-divider">
+      <div class="divider-line"></div>
+      <div class="divider-gem">◆</div>
+      <div class="divider-line r"></div>
+    </div>
+    <p class="hero-tagline">"Where precision meets people — 3.5+ years of building bridges between exceptional talent and visionary organisations."</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" data-count="70000">0</div><div class="stat-label">Talent Pool Built</div></div>
+      <div class="stat"><div class="stat-num" data-count="50">0</div><div class="stat-label">Offers in 8 Months</div></div>
+      <div class="stat"><div class="stat-num" data-count="10000">0</div><div class="stat-label">LinkedIn Network</div></div>
+      <div class="stat"><div class="stat-num" data-count="81">0</div><div class="stat-label">K+ Impressions</div></div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-wrap about-grid">
+      <div class="reveal-left">
+        <div class="section-label">✦ About</div>
+        <h2 class="section-title">The Human Behind<br/><em>the Hiring</em></h2>
+        <span class="about-quote-mark">"</span>
+        <blockquote class="about-quote">I don't just fill positions — I connect people to possibilities that transform careers and companies alike.</blockquote>
+        <p class="about-body">With over 3.5 years of experience spanning IT and non-IT recruitment, John brings a rare blend of technical understanding and human intuition to every hire. From engineering roots in Coimbatore to the dynamic corridors of Pune's tech ecosystem, his journey reflects a deliberate, passionate pursuit of excellence in people strategy.</p>
+      </div>
+      <div class="reveal-right">
+        <div class="about-card">
+          <div class="info-item"><div class="info-label">Location</div><div class="info-value">Pune → Relocating to Hyderabad</div></div>
+          <div class="info-item"><div class="info-label">Specialisation</div><div class="info-value">Talent Acquisition · Full-Cycle Recruitment</div></div>
+          <div class="info-item"><div class="info-label">Email</div><div class="info-value"><a href="mailto:johnnag08@gmail.com">johnnag08@gmail.com</a></div></div>
+          <div class="info-item"><div class="info-label">Phone</div><div class="info-value">+91 7010414524</div></div>
+          <div class="info-item"><div class="info-label">LinkedIn</div><div class="info-value"><a href="https://www.linkedin.com/in/john-prashant-nag-49561b155" target="_blank">Connect with John</a></div></div>
+          <div class="info-item"><div class="info-label">Status</div><div class="info-value" style="color:var(--gold)">Serving Notice Period · Open to Opportunities</div></div>
+          <div class="info-item"><div class="info-label">Languages</div><div class="info-value">English · Hindi</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section id="journey">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Career Timeline</div>
+        <h2 class="section-title">A Journey of<br/><em>Growth & Purpose</em></h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-spine"></div>
+
+        <!-- Role 1 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-period">OCT 2022 — APR 2023</div>
+            <div class="timeline-role">HR Trainee</div>
+            <div class="timeline-company">360 Realtors LLP · Bangalore, Karnataka</div>
+            <div class="timeline-desc">The foundation of a career built on purpose. Supported full recruitment lifecycle — job posting, sourcing, screening, and onboarding. Conducted induction sessions on policy, KPI, and payroll structure. Participated actively in campus hiring drives, evaluating group discussions and building the skillset that would define the years ahead.</div>
+            <div class="timeline-tags"><span class="tag">Onboarding</span><span class="tag">Campus Hiring</span><span class="tag">HR Operations</span><span class="tag">Documentation</span></div>
+          </div>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="timeline-item reveal" style="transition-delay:0.2s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-period">JUL 2023 — JUN 2024</div>
+            <div class="timeline-role">HR Consultant</div>
+            <div class="timeline-company">Hummingbird Web Solution Pvt. Ltd · Pune</div>
+            <div class="timeline-desc">Rising from trainee to consultant, John closed multiple high-impact technical and business positions — Project Managers, Business Analysts, Software Developers. Designed applicant screening forms, maintained candidate tracking workflows, and delivered strong hiring closure rates through strategic candidate relationship management.</div>
+            <div class="timeline-tags"><span class="tag">Technical Hiring</span><span class="tag">Naukri</span><span class="tag">Boolean Search</span><span class="tag">CRM</span></div>
+          </div>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="timeline-item reveal" style="transition-delay:0.4s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-period">JUL 2024 — PRESENT</div>
+            <div class="timeline-role">HR Executive</div>
+            <div class="timeline-company">Hummingbird Web Solution Pvt. Ltd · Pune</div>
+            <div class="timeline-desc">At the peak of his journey so far, John leads end-to-end recruitment for diverse roles — Developers, Testers, PMs, BAs, Designers, Sales, and Marketing. Orchestrated virtual campus drives at IITs, NITs, and IIITs. Built a 70,000+ developer talent pool and converted 50 offers within 8 months. Leverages data-driven dashboards for time-to-hire analytics and talent pipeline forecasting.</div>
+            <div class="timeline-tags"><span class="tag">LinkedIn Recruiter</span><span class="tag">Campus Drives</span><span class="tag">Analytics</span><span class="tag">Pipeline Building</span><span class="tag">IIT / NIT</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Expertise</div>
+        <h2 class="section-title">Crafted Skills,<br/><em>Refined Over Years</em></h2>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-category reveal" style="transition-delay:0.1s">
+          <div class="skill-icon">🎯</div>
+          <div class="skill-cat-name">Recruitment</div>
+          <ul class="skill-list">
+            <li>IT & Non-IT Recruitment</li>
+            <li>End-to-End Hiring</li>
+            <li>Talent Acquisition</li>
+            <li>Screening & Evaluation</li>
+            <li>Offer Rollout</li>
+            <li>Campus & Bulk Hiring</li>
+            <li>Stakeholder Management</li>
+          </ul>
+        </div>
+        <div class="skill-category reveal" style="transition-delay:0.2s">
+          <div class="skill-icon">🔍</div>
+          <div class="skill-cat-name">Sourcing Tools</div>
+          <ul class="skill-list">
+            <li>LinkedIn Recruiter Lite</li>
+            <li>Naukri</li>
+            <li>Boolean Search</li>
+            <li>Referral Hiring</li>
+            <li>Social Media Hiring</li>
+          </ul>
+        </div>
+        <div class="skill-category reveal" style="transition-delay:0.3s">
+          <div class="skill-icon">💻</div>
+          <div class="skill-cat-name">Tech Exposure</div>
+          <ul class="skill-list">
+            <li>Java · Full Stack</li>
+            <li>Selenium · Testing</li>
+            <li>System Design</li>
+            <li>Business Analysis</li>
+            <li>UI/UX (Figma)</li>
+            <li>Agile · Scrum · Jira</li>
+          </ul>
+        </div>
+        <div class="skill-category reveal" style="transition-delay:0.4s">
+          <div class="skill-icon">📊</div>
+          <div class="skill-cat-name">Systems & Reporting</div>
+          <ul class="skill-list">
+            <li>ATS Tracking</li>
+            <li>Google Workspace</li>
+            <li>Excel Reporting</li>
+            <li>Hiring Metrics</li>
+            <li>Candidate Database Mgmt</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+  <section id="achievements">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Highlights</div>
+        <h2 class="section-title">Milestones That<br/><em>Define the Journey</em></h2>
+      </div>
+      <div class="achievements-grid">
+        <div class="achievement-card reveal" style="transition-delay:0.1s">
+          <span class="ach-num">70K+</span>
+          <div class="ach-text">Developer candidates built into a structured talent pool for future hiring cycles</div>
+        </div>
+        <div class="achievement-card reveal" style="transition-delay:0.2s">
+          <span class="ach-num">50</span>
+          <div class="ach-text">Offer conversions achieved within just 8 months — a record closure rate</div>
+        </div>
+        <div class="achievement-card reveal" style="transition-delay:0.3s">
+          <span class="ach-num">10K+</span>
+          <div class="ach-text">LinkedIn connections cultivated across IT and business communities</div>
+        </div>
+        <div class="achievement-card reveal" style="transition-delay:0.4s">
+          <span class="ach-num">81K+</span>
+          <div class="ach-text">LinkedIn engagement impressions — a thriving professional voice and presence</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Education</div>
+        <h2 class="section-title">Academic<br/><em>Foundations</em></h2>
+      </div>
+      <div class="edu-grid">
+        <div class="edu-card reveal" style="transition-delay:0.1s">
+          <div class="edu-degree">Master of Business Administration</div>
+          <div class="edu-school">Human Resource Management<br/>Manipal University Jaipur (Distance Learning)</div>
+          <div class="edu-period">JUL 2024 · Expected Aug 2026</div>
+        </div>
+        <div class="edu-card reveal" style="transition-delay:0.2s">
+          <div class="edu-degree">Bachelor of Engineering — Civil</div>
+          <div class="edu-school">Karunya Institute of Technology & Science<br/>Coimbatore, Tamil Nadu · 72.7%</div>
+          <div class="edu-period">AUG 2015 · MAY 2019</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Certifications</div>
+        <h2 class="section-title">Credentials of<br/><em>Excellence</em></h2>
+      </div>
+      <div class="cert-list">
+        <div class="cert-item reveal"><div class="cert-gem">◆</div><div class="cert-name">Foundations of Project Management — Google</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.1s"><div class="cert-gem">◆</div><div class="cert-name">Technical Recruiter — LinkedIn</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.15s"><div class="cert-gem">◆</div><div class="cert-name">Interviewing Candidates — LinkedIn</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.2s"><div class="cert-gem">◆</div><div class="cert-name">People Analytics — LinkedIn</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.25s"><div class="cert-gem">◆</div><div class="cert-name">Performance Management — LinkedIn</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.3s"><div class="cert-gem">◆</div><div class="cert-name">Employee Experience — LinkedIn</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.35s"><div class="cert-gem">◆</div><div class="cert-name">Human Resource Management — Internshala</div></div>
+        <div class="cert-item reveal" style="transition-delay:0.4s"><div class="cert-gem">◆</div><div class="cert-name">Cambridge English ESOL Business — Council of Europe B1</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-wrap">
+      <div class="reveal">
+        <div class="section-label">✦ Let's Connect</div>
+        <h2 class="section-title">Begin a<br/><em>Conversation</em></h2>
+      </div>
+      <div class="reveal">
+        <p class="contact-info">📍 Pune → Relocating to Hyderabad, India</p>
+        <p class="contact-info">📞 +91 7010414524</p>
+        <div class="contact-divider"></div>
+        <a href="mailto:johnnag08@gmail.com" class="contact-email">johnnag08@gmail.com</a>
+        <br/><br/>
+        <a href="https://www.linkedin.com/in/john-prashant-nag-49561b155" target="_blank" class="contact-email" style="font-size:1.2rem">LinkedIn Profile →</a>
+      </div>
+      <p class="footer-sign reveal">Crafted with care · John Prashant Nag · 2025</p>
+    </div>
+  </section>
+</main>
+
+<script>
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 80);
+});
+
+// ─── NAV SCROLL ───
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── PARTICLES ───
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for(let i = 0; i < 70; i++) particles.push({
+  x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+  r: Math.random() * 1.5 + 0.3, vx: (Math.random()-.5)*0.3, vy: -Math.random()*0.4-0.1,
+  alpha: Math.random() * 0.5 + 0.1, pulse: Math.random()*Math.PI*2
+});
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.pulse += 0.02;
+    if(p.y < -5) p.y = canvas.height + 5;
+    if(p.x < -5) p.x = canvas.width + 5;
+    if(p.x > canvas.width + 5) p.x = -5;
+    const a = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(201,168,76,${a})`; ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+// ─── COUNTER ANIMATION ───
+function animateCounter(el, target){
+  let start = 0; const suffix = el.parentElement.querySelector('.stat-label')?.textContent.includes('K+') ? 'K+' : (target >= 1000 ? '+' : '');
+  const display = target >= 1000 ? Math.round(target/1000) : target;
+  const dur = 2000; const step = dur / 60;
+  const inc = display / (dur / step);
+  const timer = setInterval(() => {
+    start += inc;
+    if(start >= display){ start = display; clearInterval(timer); }
+    el.textContent = Math.floor(start).toLocaleString() + (target >= 1000 ? 'K+' : (target === 50 ? '' : '+'));
+  }, step);
+}
+const heroObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.querySelectorAll('[data-count]').forEach(el => {
+        animateCounter(el, parseInt(el.dataset.count));
+      });
+    }
+  });
+}, { threshold: 0.5 });
+heroObserver.observe(document.getElementById('hero'));
+
+// ─── VOICE MODAL ───
+function closeModal(){
+  document.getElementById('voiceModal').style.opacity = '0';
+  document.getElementById('voiceModal').style.transition = 'opacity 0.5s';
+  setTimeout(() => document.getElementById('voiceModal').style.display = 'none', 500);
+}
+
+// ─── NARRATION ───
+const narrationScript = [
+  { text: "Welcome. I'm delighted to guide you through the remarkable journey of John Prashant Nag.", section: '#hero' },
+  { text: "John is a passionate Human Resources professional with over three and a half years of experience in IT and non-IT recruitment.", section: '#about' },
+  { text: "His expertise spans full-cycle hiring — from sourcing and screening to stakeholder coordination and successful hiring closure.", section: '#about' },
+  { text: "His journey began in October 2022 as an HR Trainee at 360 Realtors in Bangalore, where he laid the foundation of his people-first career.", section: '#journey' },
+  { text: "He grew rapidly into an HR Consultant at Hummingbird Web Solution, closing multiple high-impact technical and business positions.", section: '#journey' },
+  { text: "Today, as an HR Executive at Hummingbird, John manages end-to-end recruitment for diverse roles — from developers and testers to project managers and designers.", section: '#journey' },
+  { text: "His skills are exceptional — spanning recruitment strategy, LinkedIn sourcing, Boolean search, and deep technical hiring across Java, Full Stack, and more.", section: '#skills' },
+  { text: "His achievements speak volumes. He built a talent pool of over 70,000 developers and converted 50 offers within just 8 months.", section: '#achievements' },
+  { text: "On LinkedIn, he has cultivated over 10,000 connections and generated more than 81,000 engagement impressions.", section: '#achievements' },
+  { text: "John holds a Bachelor of Engineering from Karunya Institute, and is currently pursuing his MBA in Human Resources from Manipal University.", section: '#education' },
+  { text: "He is certified by Google, LinkedIn, Internshala, and Cambridge — a testament to his commitment to continuous growth.", section: '#certifications' },
+  { text: "This is John Prashant Nag — a talent architect who builds bridges between exceptional people and visionary organisations. Thank you for visiting.", section: '#contact' }
+];
+
+let currentUtterance = null;
+let narrationIndex = 0;
+
+function startNarration(){
+  closeModal();
+  document.getElementById('narrationBar').style.display = 'flex';
+  narrationIndex = 0;
+  speakNext();
+}
+
+function speakNext(){
+  if(narrationIndex >= narrationScript.length){ stopNarration(); return; }
+  const item = narrationScript[narrationIndex];
+  document.getElementById('narrationText').textContent = item.text;
+  // Scroll to section
+  const sec = document.querySelector(item.section);
+  if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  const utter = new SpeechSynthesisUtterance(item.text);
+  utter.rate = 0.88; utter.pitch = 1.15; utter.volume = 1;
+  // Try to find a soft female voice
+  const voices = window.speechSynthesis.getVoices();
+  const femVoice = voices.find(v =>
+    v.name.toLowerCase().includes('samantha') ||
+    v.name.toLowerCase().includes('female') ||
+    v.name.toLowerCase().includes('fiona') ||
+    v.name.toLowerCase().includes('victoria') ||
+    v.name.toLowerCase().includes('karen') ||
+    v.name.toLowerCase().includes('tessa') ||
+    (v.name.toLowerCase().includes('google') && v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('female'))
+  ) || voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en'));
+  if(femVoice) utter.voice = femVoice;
+  utter.onend = () => { narrationIndex++; setTimeout(speakNext, 800); };
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
+function stopNarration(){
+  window.speechSynthesis.cancel();
+  document.getElementById('narrationBar').style.display = 'none';
+}
+
+// Preload voices
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
+// Voice recognition for "yes"
+if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SR();
+  recognition.continuous = false; recognition.interimResults = false;
+  recognition.lang = 'en-US';
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript.toLowerCase();
+    if(transcript.includes('yes') || transcript.includes('yeah') || transcript.includes('sure') || transcript.includes('ok')) startNarration();
+    else closeModal();
+  };
+  recognition.onerror = () => {}; // silently ignore
+  // Start listening after modal appears
+  setTimeout(() => { try { recognition.start(); } catch(e){} }, 1000);
+}
+</script>
+</body>
+</html>
